@@ -15,7 +15,6 @@ var connection = mysql.createConnection({
 
 connection.connect(function(err) {
     if (err) throw err;
-    console.log("You are connected");
 });
 
 function printTable() {
@@ -30,16 +29,15 @@ function printTable() {
                 [(JSON.parse(JSON.stringify(results))[i]["item_id"]), (JSON.parse(JSON.stringify(results))[i]["product_name"]), (JSON.parse(JSON.stringify(results))[i]["price"])]);
   			}
         console.log("\n" + table.toString());
+        makePurchase();
     });
 }
-
-printTable();
 
 function makePurchase(){
 	inquirer.prompt([
 			{
 			  type: 'input',
-			  message: 'What is the item_id of the product you would like to buy?',
+			  message: '\n What is the item_id of the product you would like to buy?',
 			  name: 'product'
 			},
 			{
@@ -63,10 +61,9 @@ function makePurchase(){
 						if (err) throw err;
 					});
 					printTable();
-					makePurchase();
 				}
 			});
 		});
 }
 
-makePurchase();
+printTable();
