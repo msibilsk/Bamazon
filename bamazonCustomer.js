@@ -18,7 +18,7 @@ connection.connect(function(err) {
 });
 
 function printTable() {
-    connection.query('SELECT * from products', function(err, results) {
+    connection.query('SELECT * FROM products', function(err, results) {
             if (err) throw err;
             var table = new Table({
                 head: ['item_id', 'product_name', 'price']
@@ -56,9 +56,18 @@ function makePurchase(){
 					console.log("Insufficient quantity in stock!");
 				} else{
 					stock_quantity -= quantity;
-					console.log("Total purchase price: " + quantity * results[0].price);
-					connection.query('UPDATE products SET ? WHERE item_id=?', [{stock_quantity: stock_quantity}, product], function(err, results){
+					var totalPrice = quantity * results[0].price;
+					var totalSales = totalPrice + results[0].product_sales;
+					var department = results[0].department_name;
+					console.log("Total purchase price: " + totalPrice);
+					connection.query('UPDATE products SET stock_quantity=?, product_sales=? WHERE item_id=?', [stock_quantity, totalSales, product], function(err, results){
 						if (err) throw err;
+					});
+					connection.query('SELECT total_sales FROM departments WHERE department_name=?', [department], function(err, results){
+						var departmentTotal = results[0].total_sales + totalPrice;
+						connection.query('UPDATE departments SET total_sales=? WHERE department_name=?', [departmentTotal, department], function(err, results){
+							if(err) throw err;
+						});
 					});
 					printTable();
 				}
