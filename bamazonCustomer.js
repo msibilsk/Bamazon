@@ -54,6 +54,7 @@ function makePurchase(){
 				var stock_quantity = results[0].stock_quantity;
 				if (stock_quantity < quantity) {
 					console.log("Insufficient quantity in stock!");
+					printTable();
 				} else{
 					stock_quantity -= quantity;
 					var totalPrice = quantity * results[0].price;
