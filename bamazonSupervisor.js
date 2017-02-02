@@ -16,6 +16,29 @@ var connection = mysql.createConnection({
 connection.connect(function(err) {
     if (err) throw err;
 });
+function addNewDepartment(){
+	inquirer.prompt([
+			{
+				type: 'input',
+				message: 'What is the department_name name?',
+				name: 'department_name'
+			},
+			{
+				type: 'input',
+				message: 'What are the over head costs of the new department?',
+				name: 'over_head'
+			}
+
+		]).then(function(answers){
+			var department_name = answers.department_name; 
+			var over_head_costs = answers.over_head;
+
+			connection.query('INSERT INTO departments (department_name, over_head_costs) VALUES (?, ?)', [department_name, over_head_costs], function(err, results){
+				if(err) throw err;
+			});
+			runSupervisorFunctions();
+		});
+};
 
 function printTable() {
     connection.query('SELECT * FROM departments', function(err, results) {
@@ -30,7 +53,29 @@ function printTable() {
   			}
 
         console.log("\n" + table.toString());
+        runSupervisorFunctions();
     });
 };
 
-printTable();
+
+function runSupervisorFunctions(){
+	inquirer.prompt([
+			{
+			  type: 'list',
+			  message: 'What would you like to do?',
+			  choices: ["View Product Sales by Department", "Add New Department"],
+			  name: 'options'
+			}
+		]).then(function(answer){
+
+			if(answer.options === "Add New Department"){
+				addNewDepartment();
+			} else if(answer.options === "View Product Sales by Department"){
+				printTable();
+			} else {
+				throw err;
+			}
+		});
+};
+
+runSupervisorFunctions();

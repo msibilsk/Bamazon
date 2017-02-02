@@ -59,7 +59,7 @@ function makePurchase(){
 					var totalPrice = quantity * results[0].price;
 					var totalSales = totalPrice + results[0].product_sales;
 					var department = results[0].department_name;
-					console.log("Total purchase price: " + totalPrice);
+					console.log("Total purchase price: $" + totalPrice);
 					connection.query('UPDATE products SET stock_quantity=?, product_sales=? WHERE item_id=?', [stock_quantity, totalSales, product], function(err, results){
 						if (err) throw err;
 					});

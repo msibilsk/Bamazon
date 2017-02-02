@@ -17,7 +17,7 @@ connection.connect(function(err) {
     if (err) throw err;
 });
 
-function printTable() {
+function printTable(callback) {
     connection.query('SELECT * FROM products', function(err, results) {
             if (err) throw err;
             var table = new Table({
@@ -29,6 +29,11 @@ function printTable() {
                 [(JSON.parse(JSON.stringify(results))[i]["item_id"]), (JSON.parse(JSON.stringify(results))[i]["product_name"]), (JSON.parse(JSON.stringify(results))[i]["price"]), (JSON.parse(JSON.stringify(results))[i]["stock_quantity"])]);
   			}
         console.log("\n" + table.toString());
+        if(callback === "startOver"){
+        	runManagerFunctions();
+        } else if(callback === "addInventory"){
+        	addInventory();
+        }
     });
 };
 
@@ -46,12 +51,11 @@ function printLowQuantity() {
 	  		}
 		}
         console.log("\n" + table.toString());
+        runManagerFunctions();
     });
 };
 
 function addInventory() {
-	printTable();
-	//question is coming up before the table
 	inquirer.prompt([
 		{
 		  type: 'input',
@@ -80,7 +84,7 @@ function addInventory() {
 		});
 
 		console.log("Here are the updated amounts:");
-		//printTable(); <-- need to make it so the table actually updates
+		printTable("startOver"); //<-- table still not updating...
 		
 	});
 };
@@ -116,6 +120,7 @@ function addNewProduct(){
 
 			connection.query('INSERT INTO products (product_name, department_name, price, stock_quantity) VALUES (?, ?, ?, ?)', [product_name, department_name, price, stock_quantity], function(err, results){
 				if(err) throw err;
+				runManagerFunctions();
 			});
 		});
 };
@@ -131,13 +136,13 @@ function runManagerFunctions(){
 		]).then(function(results){
 			switch(results.options){
 				case "View Products for Sale":
-					printTable();
+					printTable("startOver");
 					break;
 				case "View Low Inventory":
 					printLowQuantity();
 					break;
 				case "Add to Inventory": 
-					addInventory();
+					printTable("addInventory");
 					break;
 				case "Add New Product":
 					addNewProduct();
