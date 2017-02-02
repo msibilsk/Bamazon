@@ -1,5 +1,5 @@
 # Bamazon
 Amazon-like storefront with Node.js &amp; MySQL
 
-![Screenshot One](/images/Capture.png)
+![Screenshot One](/blob/master/images/Capture.PNG)
 Format: ![Alt Text](url)
